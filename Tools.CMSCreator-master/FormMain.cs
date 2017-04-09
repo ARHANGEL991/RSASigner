@@ -221,7 +221,9 @@ namespace Tools.CMSCreator
             }
             catch (CryptographicException e)
             {
-                Console.WriteLine(e.Message);
+                MessageBox.Show(
+                    string.Format("", e.Message),
+                    "Ошибка создания подписи");
 
                 return null;
             }
@@ -244,7 +246,9 @@ namespace Tools.CMSCreator
             }
             catch (CryptographicException e)
             {
-                Console.WriteLine(e.Message);
+                MessageBox.Show(
+                    string.Format("", e.Message),
+                    "Ошибка проверки подписи");
 
                 return false;
             }
