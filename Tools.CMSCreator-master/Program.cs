@@ -6,7 +6,7 @@ namespace Tools.CMSCreator
 	static class Program
 	{
 		/// <summary>
-		/// Главная точка входа для приложения.
+		/// Главная точка входа для приложения kuhtini ptz27.
 		/// </summary>
 		[STAThread]
 		static void Main()

@@ -35,7 +35,7 @@ namespace Tools.CMSCreator
 
         private void FormMain_DragDrop(object sender, DragEventArgs e)
         {
-            if (radioButtonSign.Enabled)
+            if (radioButtonSign.Enabled) //Подпись
             {
                 if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
@@ -107,7 +107,7 @@ namespace Tools.CMSCreator
 
                 }
             }
-            if (radioButtonCheck.Checked)
+            if (radioButtonCheck.Checked) //Проверка
             {
                 #region 
                 if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -118,11 +118,7 @@ namespace Tools.CMSCreator
                     RSACryptoServiceProvider AlgRSA = new RSACryptoServiceProvider();
                     RSAParameters Key = AlgRSA.ExportParameters(true);
 
-                    string endOfFile; // если другой тип файла
-                    if (textBox1.Text == "")
-                        endOfFile = "txt";
-                    else
-                        endOfFile = textBox1.Text;
+                    
 
                     string[] filePaths = (string[])(e.Data.GetData(DataFormats.FileDrop));
                     foreach (string fileLoc in filePaths)
@@ -132,13 +128,13 @@ namespace Tools.CMSCreator
                             FileStream fileXml = new FileStream(fileLoc, FileMode.Open);
                             using (StreamReader readerxml = new StreamReader(fileXml))
                             {
-                                AlgRSA.FromXmlString(readerxml.ReadToEnd()); //считаваем ключи
+                                AlgRSA.FromXmlString(readerxml.ReadToEnd()); //считываем ключи
                                 Key = AlgRSA.ExportParameters(true);
                             }
 
                         }
 
-                        if (fileLoc.EndsWith(endOfFile))
+                        if (!(fileLoc.EndsWith("xml") || fileLoc.EndsWith("dat")))
                         {
                             originalData = ReadFile(fileLoc);
 
@@ -153,11 +149,11 @@ namespace Tools.CMSCreator
 
                     if (VerifySignedHash(originalData, signData, Key))
                     {
-                        MessageBox.Show("The data was verified.");
+                        MessageBox.Show("The sign is verified.");
                     }
                     else
                     {
-                        MessageBox.Show("The data does not match the signature.");
+                        MessageBox.Show("The sign does not match original data with this keys.");
                     }
 
                     #endregion
@@ -261,7 +257,7 @@ namespace Tools.CMSCreator
                 return false; }
         }
 
-        private void RadioButtonCheck_CheckedChanged(object sender, EventArgs e)
+      /*  private void RadioButtonCheck_CheckedChanged(object sender, EventArgs e) //
         {
             if (radioButtonCheck.Checked)
             {
@@ -274,7 +270,7 @@ namespace Tools.CMSCreator
                 labelTXT.Enabled = false;
                 textBox1.Enabled = false;
             }
-        }
+        }*/ 
 
         
     }

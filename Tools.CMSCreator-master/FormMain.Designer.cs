@@ -2,6 +2,7 @@
 {
 	partial class FormMain
 	{
+        //created by Kuhtini
 		/// <summary>
 		/// Требуется переменная конструктора.
 		/// </summary>
@@ -55,7 +56,6 @@
             this.radioButtonCheck.TabStop = true;
             this.radioButtonCheck.Text = "Проверка подписи";
             this.radioButtonCheck.UseVisualStyleBackColor = true;
-            this.radioButtonCheck.CheckedChanged += new System.EventHandler(this.RadioButtonCheck_CheckedChanged);
             // 
             // textBox1
             // 
@@ -64,7 +64,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 2;
-           
+            this.textBox1.Visible = false;
             // 
             // labelTXT
             // 
@@ -75,6 +75,7 @@
             this.labelTXT.Size = new System.Drawing.Size(187, 26);
             this.labelTXT.TabIndex = 3;
             this.labelTXT.Text = "Формат файла \r\nдля которого проверяется подпись\r\n";
+            this.labelTXT.Visible = false;
             // 
             // FormMain
             // 
