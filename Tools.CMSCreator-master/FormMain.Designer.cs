@@ -30,7 +30,6 @@
 		{
             this.radioButtonSign = new System.Windows.Forms.RadioButton();
             this.radioButtonCheck = new System.Windows.Forms.RadioButton();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // radioButtonSign
@@ -55,10 +54,6 @@
             this.radioButtonCheck.Text = "Проверка подписи";
             this.radioButtonCheck.UseVisualStyleBackColor = true;
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            // 
             // FormMain
             // 
             this.AllowDrop = true;
@@ -80,7 +75,6 @@
         private int i=0;
 		private System.Windows.Forms.RadioButton radioButtonSign;
 		private System.Windows.Forms.RadioButton radioButtonCheck;
-        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }
 

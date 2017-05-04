@@ -45,43 +45,37 @@ namespace Tools.CMSCreator
                         try
                         {
                             #region
-                            if (radioButtonSign.Enabled)
+                            if (radioButtonSign.Checked)
                             {
-                                // Create a UnicodeEncoder to convert between byte array and string.
+                                // Конвертер в юникод
                                 ASCIIEncoding ByteConverter = new ASCIIEncoding();
 
-                                string dataString;
+                                
 
                                 // Create byte arrays to hold original, encrypted, and decrypted data.
                                 byte[] originalData = ReadFile(fileLoc);
                                 byte[] signedData;
 
-                                // Create a new instance of the RSACryptoServiceProvider class 
-                                // and automatically create a new key-pair.
+                                // яснопонятно
                                 RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
 
-                                // Export the key information to an RSAParameters object.
-                                // You must pass true to export the private key for signing.
-                                // However, you do not need to export the private key
-                                // for verification.
+                                //Экспортирование параметров в xml файл
                                 RSAParameters Key = RSAalg.ExportParameters(true);
-                                XmlDocument XMLdoc = new XmlDocument();
+                                
 
-                                FileStream fileXml = new FileStream(Directory.GetCurrentDirectory() + "/keys" + i++ + ".xml", FileMode.Create);
+                                FileStream fileXml = new FileStream(Directory.GetCurrentDirectory() + "/keys" + i + ".xml", FileMode.Create);
 
                                 using (StreamWriter writerf = new StreamWriter(fileXml, Encoding.UTF8))
                                 {
                                     writerf.Write(RSAalg.ToXmlString(true));
                                 }
+                                  fileXml.Close();
 
 
-                                fileXml.Close();
-
-
-                                // Hash and sign the data.
+                                // Хеширем и подписываем
                                 signedData = HashAndSignBytes(originalData, Key);
 
-                                WriteFile(Directory.GetCurrentDirectory() + "/signData" + i + ".dat", signedData);
+                                WriteFile(Directory.GetCurrentDirectory() + "/signData" + i++ + ".dat", signedData);
 
                                 // Verify the data and display the result to the 
                                 // console.
@@ -92,61 +86,13 @@ namespace Tools.CMSCreator
                                 }
                                 else
                                 {
-                                    Console.WriteLine("The data does not match the signature.");
+                                    MessageBox.Show("The data does not match the signature.");
                                 }
                                 #endregion
 
 
                             }
-                            else
-                            {
-                                #region
-
-                                byte[] signData = ReadFile(fileLoc);
-                                using (OpenFileDialog openFileDialog1 = new OpenFileDialog())
-                                {
-                                    Stream myStream;
-                                    openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
-                                    openFileDialog1.Filter = "(*.xml)|*.xml|All files (*.*)|*.*";
-                                    openFileDialog1.FilterIndex = 2;
-                                    if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                                    {
-                                        try
-                                        {
-                                            if ((myStream = openFileDialog1.OpenFile()) != null)
-                                            {
-                                                using (myStream)
-                                                {
-                                                    RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
-                                                    RSAalg.FromXmlString(System.IO.File.ReadAllText(openFileDialog1.FileName));
-                                                    RSAParameters Key = RSAalg.ExportParameters(true);
-                                                    if (VerifySignedHash(originalData, signData, Key))
-                                                    {
-                                                        Console.WriteLine("The data was verified.");
-                                                    }
-                                                    else
-                                                    {
-                                                        Console.WriteLine("The data does not match the signature.");
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            MessageBox.Show("Error: Could not read file from disk: " + ex.Message);
-                                        }
-                                    }
-                                }
-
-
-
-
-
-
-
-                                #endregion
-                            }
+                            
                         }
 
 
@@ -161,7 +107,56 @@ namespace Tools.CMSCreator
 
                 }
             }
-       }
+            if (radioButtonCheck.Checked)
+            {
+                #region 
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                {
+                    byte[] signData = null;
+                    byte[] originalData = null;
+
+                    RSACryptoServiceProvider AlgRSA = new RSACryptoServiceProvider();
+                    RSAParameters Key = AlgRSA.ExportParameters(true);
+                    string[] filePaths = (string[])(e.Data.GetData(DataFormats.FileDrop));
+                    foreach (string fileLoc in filePaths)
+                    {
+                        if (fileLoc.EndsWith("xml"))
+                        {
+                            FileStream fileXml = new FileStream(fileLoc, FileMode.Open);
+                            using (StreamReader readerxml = new StreamReader(fileXml))
+                            {
+                                AlgRSA.FromXmlString(readerxml.ReadToEnd()); //считаваем ключи
+                                Key = AlgRSA.ExportParameters(true);
+                            }
+
+                        }
+
+                        if (fileLoc.EndsWith("txt"))
+                        {
+                            originalData = ReadFile(fileLoc);
+
+                        }
+
+                        if (fileLoc.EndsWith("dat"))
+                        {
+                            signData = ReadFile(fileLoc);
+                        }
+
+                    }
+
+                    if (VerifySignedHash(originalData, signData, Key))
+                    {
+                        MessageBox.Show("The data was verified.");
+                    }
+                    else
+                    {
+                        MessageBox.Show("The data does not match the signature.");
+                    }
+
+                    #endregion
+                }
+            }
+        }
                 
             
         
@@ -254,6 +249,9 @@ namespace Tools.CMSCreator
 
                 return false;
             }
+            catch (Exception)
+            { MessageBox.Show("Не все файлы приложены для проверки");
+                return false; }
         }
     }
 }
