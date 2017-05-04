@@ -35,126 +35,132 @@ namespace Tools.CMSCreator
 
         private void FormMain_DragDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            if (radioButtonSign.Enabled)
             {
-                string[] filePaths = (string[])(e.Data.GetData(DataFormats.FileDrop));
-                foreach (string fileLoc in filePaths)
+                if (e.Data.GetDataPresent(DataFormats.FileDrop))
                 {
-                    try
+                    string[] filePaths = (string[])(e.Data.GetData(DataFormats.FileDrop));
+                    foreach (string fileLoc in filePaths)
                     {
-                        #region
-                        if (radioButtonSign.Enabled)
+                        try
                         {
-                            // Create a UnicodeEncoder to convert between byte array and string.
-                            ASCIIEncoding ByteConverter = new ASCIIEncoding();
+                            #region
+                            if (radioButtonSign.Enabled)
+                            {
+                                // Create a UnicodeEncoder to convert between byte array and string.
+                                ASCIIEncoding ByteConverter = new ASCIIEncoding();
 
-                            string dataString;
+                                string dataString;
 
-                            // Create byte arrays to hold original, encrypted, and decrypted data.
-                            byte[] originalData = ReadFile(fileLoc);
-                            byte[] signedData;
+                                // Create byte arrays to hold original, encrypted, and decrypted data.
+                                byte[] originalData = ReadFile(fileLoc);
+                                byte[] signedData;
 
-                            // Create a new instance of the RSACryptoServiceProvider class 
-                            // and automatically create a new key-pair.
-                            RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
+                                // Create a new instance of the RSACryptoServiceProvider class 
+                                // and automatically create a new key-pair.
+                                RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
 
-                            // Export the key information to an RSAParameters object.
-                            // You must pass true to export the private key for signing.
-                            // However, you do not need to export the private key
-                            // for verification.
-                            RSAParameters Key = RSAalg.ExportParameters(true);
-                            XmlDocument XMLdoc = new XmlDocument();
+                                // Export the key information to an RSAParameters object.
+                                // You must pass true to export the private key for signing.
+                                // However, you do not need to export the private key
+                                // for verification.
+                                RSAParameters Key = RSAalg.ExportParameters(true);
+                                XmlDocument XMLdoc = new XmlDocument();
 
-                            FileStream fileXml = new FileStream(Directory.GetCurrentDirectory() + "/keys" + i++ + ".xml", FileMode.Create);
-                            
+                                FileStream fileXml = new FileStream(Directory.GetCurrentDirectory() + "/keys" + i++ + ".xml", FileMode.Create);
+
                                 using (StreamWriter writerf = new StreamWriter(fileXml, Encoding.UTF8))
                                 {
                                     writerf.Write(RSAalg.ToXmlString(true));
                                 }
 
 
-                            fileXml.Close();
+                                fileXml.Close();
 
 
-                            // Hash and sign the data.
-                            signedData = HashAndSignBytes(originalData, Key);
+                                // Hash and sign the data.
+                                signedData = HashAndSignBytes(originalData, Key);
 
-                            WriteFile(Directory.GetCurrentDirectory() + "/signData" + i + ".dat", signedData);
+                                WriteFile(Directory.GetCurrentDirectory() + "/signData" + i + ".dat", signedData);
 
-                            // Verify the data and display the result to the 
-                            // console.
-                            if (VerifySignedHash(originalData, signedData, Key))
-                            {
-                                Console.WriteLine("The data was verified.");
-                                MessageBox.Show(string.Format("File {0} alredy signed (sign).", fileLoc));
+                                // Verify the data and display the result to the 
+                                // console.
+                                if (VerifySignedHash(originalData, signedData, Key))
+                                {
+                                    Console.WriteLine("The data was verified.");
+                                    MessageBox.Show(string.Format("File {0} alredy signed (sign).", fileLoc));
+                                }
+                                else
+                                {
+                                    Console.WriteLine("The data does not match the signature.");
+                                }
+                                #endregion
+
+
                             }
                             else
                             {
-                                Console.WriteLine("The data does not match the signature.");
-                            }
-                            #endregion
+                                #region
 
-
-                        }
-                        else
-                        {
-                            #region
-                        /*    byte[] signData = ReadFile(fileLoc);
-                            using (OpenFileDialog openFileDialog1 = new OpenFileDialog())
-                            {
-                                Stream myStream;
-                                openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
-                                openFileDialog1.Filter = "(*.xml)|*.xml|All files (*.*)|*.*";
-                                openFileDialog1.FilterIndex = 2;
-                                if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                                { try
+                                byte[] signData = ReadFile(fileLoc);
+                                using (OpenFileDialog openFileDialog1 = new OpenFileDialog())
+                                {
+                                    Stream myStream;
+                                    openFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
+                                    openFileDialog1.Filter = "(*.xml)|*.xml|All files (*.*)|*.*";
+                                    openFileDialog1.FilterIndex = 2;
+                                    if (openFileDialog1.ShowDialog() == DialogResult.OK)
                                     {
-                                        if ((myStream = openFileDialog1.OpenFile()) != null)
+                                        try
                                         {
-                                            using (myStream)
+                                            if ((myStream = openFileDialog1.OpenFile()) != null)
                                             {
-                                                RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
-                                             RSAalg.FromXmlString(System.IO.File.ReadAllText(openFileDialog1.FileName));
-                                                RSAParameters Key = RSAalg.ExportParameters(true);
-                                                if (VerifySignedHash(originalData, signData, Key))
+                                                using (myStream)
                                                 {
-                                                    Console.WriteLine("The data was verified.");
-                                                }
-                                                else
-                                                {
-                                                    Console.WriteLine("The data does not match the signature.");
-                                                }
+                                                    RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
+                                                    RSAalg.FromXmlString(System.IO.File.ReadAllText(openFileDialog1.FileName));
+                                                    RSAParameters Key = RSAalg.ExportParameters(true);
+                                                    if (VerifySignedHash(originalData, signData, Key))
+                                                    {
+                                                        Console.WriteLine("The data was verified.");
+                                                    }
+                                                    else
+                                                    {
+                                                        Console.WriteLine("The data does not match the signature.");
+                                                    }
 
+                                                }
                                             }
                                         }
-                                    }
-                                    catch (Exception ex)
-                                    { MessageBox.Show("Error: Could not read file from disk: " + ex.Message);
+                                        catch (Exception ex)
+                                        {
+                                            MessageBox.Show("Error: Could not read file from disk: " + ex.Message);
+                                        }
                                     }
                                 }
+
+
+
+
+
+
+
+                                #endregion
                             }
-                            */
-
-
-
-
-
-
-                            #endregion
                         }
+
+
+
+                        catch (ArgumentNullException)
+                        {
+                            Console.WriteLine("The data was not signed or verified");
+
+                        }
+
                     }
 
-
-
-                    catch (ArgumentNullException)
-                  {
-                    Console.WriteLine("The data was not signed or verified");
-
-                     }
-
-              }
-
-           }
+                }
+            }
        }
                 
             
@@ -209,14 +215,12 @@ namespace Tools.CMSCreator
         {
             try
             {
-                // Create a new instance of RSACryptoServiceProvider using the 
-                // key from RSAParameters.  
+                // Создание экземпляра алгоритма с нужными ключами
                 RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
 
                 RSAalg.ImportParameters(Key);
 
-                // Hash and sign the data. Pass a new instance of SHA1CryptoServiceProvider
-                // to specify the use of SHA1 for hashing.
+                // Хеширование и подпись через алгоритм SHA1
                 return RSAalg.SignData(DataToSign, new SHA1CryptoServiceProvider());
             }
             catch (CryptographicException e)
@@ -233,14 +237,12 @@ namespace Tools.CMSCreator
         {
             try
             {
-                // Create a new instance of RSACryptoServiceProvider using the 
-                // key from RSAParameters.
+                // Создание экземпляра алгоритма с нужными ключами
                 RSACryptoServiceProvider RSAalg = new RSACryptoServiceProvider();
 
                 RSAalg.ImportParameters(Key);
 
-                // Verify the data using the signature.  Pass a new instance of SHA1CryptoServiceProvider
-                // to specify the use of SHA1 for hashing.
+                // Проверка подлинности подписи
                 return RSAalg.VerifyData(DataToVerify, new SHA1CryptoServiceProvider(), SignedData);
 
             }
