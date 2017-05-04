@@ -30,6 +30,8 @@
 		{
             this.radioButtonSign = new System.Windows.Forms.RadioButton();
             this.radioButtonCheck = new System.Windows.Forms.RadioButton();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.labelTXT = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // radioButtonSign
@@ -53,6 +55,26 @@
             this.radioButtonCheck.TabStop = true;
             this.radioButtonCheck.Text = "Проверка подписи";
             this.radioButtonCheck.UseVisualStyleBackColor = true;
+            this.radioButtonCheck.CheckedChanged += new System.EventHandler(this.RadioButtonCheck_CheckedChanged);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Enabled = false;
+            this.textBox1.Location = new System.Drawing.Point(354, 35);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(100, 20);
+            this.textBox1.TabIndex = 2;
+           
+            // 
+            // labelTXT
+            // 
+            this.labelTXT.AutoSize = true;
+            this.labelTXT.Enabled = false;
+            this.labelTXT.Location = new System.Drawing.Point(161, 31);
+            this.labelTXT.Name = "labelTXT";
+            this.labelTXT.Size = new System.Drawing.Size(187, 26);
+            this.labelTXT.TabIndex = 3;
+            this.labelTXT.Text = "Формат файла \r\nдля которого проверяется подпись\r\n";
             // 
             // FormMain
             // 
@@ -60,6 +82,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(617, 370);
+            this.Controls.Add(this.labelTXT);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.radioButtonCheck);
             this.Controls.Add(this.radioButtonSign);
             this.Name = "FormMain";
@@ -75,6 +99,8 @@
         private int i=0;
 		private System.Windows.Forms.RadioButton radioButtonSign;
 		private System.Windows.Forms.RadioButton radioButtonCheck;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label labelTXT;
     }
 }
 

@@ -117,6 +117,13 @@ namespace Tools.CMSCreator
 
                     RSACryptoServiceProvider AlgRSA = new RSACryptoServiceProvider();
                     RSAParameters Key = AlgRSA.ExportParameters(true);
+
+                    string endOfFile; // если другой тип файла
+                    if (textBox1.Text == "")
+                        endOfFile = "txt";
+                    else
+                        endOfFile = textBox1.Text;
+
                     string[] filePaths = (string[])(e.Data.GetData(DataFormats.FileDrop));
                     foreach (string fileLoc in filePaths)
                     {
@@ -131,7 +138,7 @@ namespace Tools.CMSCreator
 
                         }
 
-                        if (fileLoc.EndsWith("txt"))
+                        if (fileLoc.EndsWith(endOfFile))
                         {
                             originalData = ReadFile(fileLoc);
 
@@ -253,5 +260,22 @@ namespace Tools.CMSCreator
             { MessageBox.Show("Не все файлы приложены для проверки");
                 return false; }
         }
+
+        private void RadioButtonCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonCheck.Checked)
+            {
+                labelTXT.Enabled = true;
+                textBox1.Enabled = true;
+
+            }
+            else
+            {
+                labelTXT.Enabled = false;
+                textBox1.Enabled = false;
+            }
+        }
+
+        
     }
 }
